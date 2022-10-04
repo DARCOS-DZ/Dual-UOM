@@ -14,23 +14,16 @@ class CustomStockLedgerEntry(StockLedgerEntry):
                     if self.warehouse == item.t_warehouse or self.warehouse == item.s_warehouse :
                         if self.actual_qty < 0 :
                             self.qty_2_change = item.qty2 * -1
-                            self.qty_2_after_transaction = bin.actual_quantity_2 + self.qty_2_change
-                            bin.actual_quantity_2 = self.qty_2_after_transaction
-                            bin.save()
                         else :
                             self.qty_2_change = item.qty2
-                            self.qty_2_after_transaction = bin.actual_quantity_2 + self.qty_2_change
-                            bin.actual_quantity_2 = self.qty_2_after_transaction
-                            bin.save()
+
                 except Exception as e:
                     if self.warehouse == item.warehouse :
                         if self.actual_qty < 0 :
                             self.qty_2_change = item.qty2 * -1
-                            self.qty_2_after_transaction = bin.actual_quantity_2 + self.qty_2_change
-                            bin.actual_quantity_2 = self.qty_2_after_transaction
-                            bin.save()
                         else :
                             self.qty_2_change = item.qty2
-                            self.qty_2_after_transaction = bin.actual_quantity_2 + self.qty_2_change
-                            bin.actual_quantity_2 = self.qty_2_after_transaction
-                            bin.save()
+
+        self.qty_2_after_transaction = bin.actual_quantity_2 + self.qty_2_change
+        bin.actual_quantity_2 = self.qty_2_after_transaction
+        bin.save()
