@@ -10,6 +10,11 @@ app_license = "MIT"
 # Includes in <head>
 # ------------------
 
+# import Stock function & custom function for customisation
+override_doctype_class = {
+    "Stock Ledger Entry": "dual_uom.overrides.stock_ledger_entry.CustomStockLedgerEntry"
+}
+
 # include js, css files in header of desk.html
 # app_include_css = "/assets/dual_uom/css/dual_uom.css"
 # app_include_js = "/assets/dual_uom/js/dual_uom.js"
