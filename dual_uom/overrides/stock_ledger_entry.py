@@ -3,17 +3,17 @@ import frappe
 class CustomStockLedgerEntry(StockLedgerEntry):
     def before_submit(self):
         doc = frappe.get_doc(self.voucher_type, self.voucher_no)
-        for child_doc in doc.items:
-            if self.item_code == child_doc.item_code :
+        for item in doc.items:
+            if self.item_code == item.item_code :
                 try:
-                    if self.warehouse == child_doc.t_warehouse or self.warehouse == child_doc.s_warehouse :
+                    if self.warehouse == item.t_warehouse or self.warehouse == item.s_warehouse :
                         if self.actual_qty < 0 :
-                            self.qty_2_change = child_doc.qty2 * -1
+                            self.qty_2_change = item.qty2 * -1
                         else :
-                            self.qty_2_change = child_doc.qty2
+                            self.qty_2_change = item.qty2
                 except Exception as e:
-                    if self.warehouse == child_doc.warehouse :
+                    if self.warehouse == item.warehouse :
                         if self.actual_qty < 0 :
-                            self.qty_2_change = child_doc.qty2 * -1
+                            self.qty_2_change = item.qty2 * -1
                         else :
-                            self.qty_2_change = child_doc.qty2
+                            self.qty_2_change = item.qty2
