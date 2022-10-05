@@ -8,22 +8,33 @@ class CustomStockLedgerEntry(StockLedgerEntry):
         doc = frappe.get_doc(self.voucher_type, self.voucher_no)
         bin_name = get_or_make_bin(self.item_code, self.warehouse)
         bin = frappe.get_doc("Bin", bin_name)
-        for item in doc.items:
-            if self.item_code == item.item_code :
-                try:
-                    if self.warehouse == item.t_warehouse or self.warehouse == item.s_warehouse :
-                        if self.actual_qty < 0 :
-                            self.qty_2_change = item.qty2 * -1
-                        else :
-                            self.qty_2_change = item.qty2
+        if self.voucher_type == "Stock Reconciliation":
+            if self.actual_qty == 0 and self.actual_qty == 0 :
+                bin.actual_quantity_2 = 0
+                bin.save()
+            else :
+                for item in doc.items:
+                    if self.item_code == item.item_code and self.warehouse == item.warehouse :
+                        self.qty_2_change = item.qty2
+                        self.qty_2_after_transaction = self.qty_2_change
+                        bin.actual_quantity_2 = self.qty_2_change
+                        bin.save()
+        else :
+            for item in doc.items:
+                if self.item_code == item.item_code :
+                    try:
+                        if self.warehouse == item.t_warehouse or self.warehouse == item.s_warehouse :
+                            if self.actual_qty < 0 :
+                                self.qty_2_change = -item.qty2
+                            else :
+                                self.qty_2_change = item.qty2
 
-                except Exception as e:
-                    if self.warehouse == item.warehouse :
-                        if self.actual_qty < 0 :
-                            self.qty_2_change = item.qty2 * -1
-                        else :
-                            self.qty_2_change = item.qty2
-
-        self.qty_2_after_transaction = bin.actual_quantity_2 + self.qty_2_change
-        bin.actual_quantity_2 = self.qty_2_after_transaction
-        bin.save()
+                    except:
+                        if self.warehouse == item.warehouse :
+                            if self.actual_qty < 0 :
+                                self.qty_2_change = -item.qty2
+                            else :
+                                self.qty_2_change = item.qty2
+            self.qty_2_after_transaction = bin.actual_quantity_2 + self.qty_2_change
+            bin.actual_quantity_2 = self.qty_2_after_transaction
+            bin.save()
