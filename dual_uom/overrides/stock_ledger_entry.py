@@ -4,7 +4,7 @@ from erpnext.stock.utils import get_or_make_bin
 
 
 class CustomStockLedgerEntry(StockLedgerEntry):
-    def before_submit(self):
+    def before_validate(self):
         doc = frappe.get_doc(self.voucher_type, self.voucher_no)
         bin_name = get_or_make_bin(self.item_code, self.warehouse)
         bin = frappe.get_doc("Bin", bin_name)
