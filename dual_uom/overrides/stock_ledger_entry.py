@@ -37,4 +37,4 @@ class CustomStockLedgerEntry(StockLedgerEntry):
                                 self.qty_2_change = item.qty2
             self.qty_2_after_transaction = bin.actual_quantity_2 + self.qty_2_change
             bin.actual_quantity_2 = self.qty_2_after_transaction
-            bin.save(ignore_permissions=True,  ignore_links=True)
+            bin.save(ignore_permissions=True)
