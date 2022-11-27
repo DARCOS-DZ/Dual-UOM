@@ -4,21 +4,21 @@ from erpnext.stock.utils import get_or_make_bin
 
 
 class CustomStockLedgerEntry(StockLedgerEntry):
-    def before_submit(self):
+    def on_submit(self):
         doc = frappe.get_doc(self.voucher_type, self.voucher_no)
         bin_name = get_or_make_bin(self.item_code, self.warehouse)
         bin = frappe.get_doc("Bin", bin_name)
         if self.voucher_type == "Stock Reconciliation":
             if self.actual_qty == 0 and self.actual_qty == 0 :
                 bin.actual_quantity_2 = 0
-                bin.save(ignore_permissions=True,  ignore_links=True)
+                bin.save(ignore_permissions=True)
             else :
                 for item in doc.items:
                     if self.item_code == item.item_code and self.warehouse == item.warehouse :
                         self.qty_2_change = item.qty2
                         self.qty_2_after_transaction = self.qty_2_change
                         bin.actual_quantity_2 = self.qty_2_change
-                        bin.save(ignore_permissions=True,  ignore_links=True)
+                        bin.save(ignore_permissions=True)
         else :
             for item in doc.items:
                 if self.item_code == item.item_code :
@@ -35,6 +35,11 @@ class CustomStockLedgerEntry(StockLedgerEntry):
                                 self.qty_2_change = -item.qty2
                             else :
                                 self.qty_2_change = item.qty2
-            self.qty_2_after_transaction = bin.actual_quantity_2 + self.qty_2_change
+            # Not a good practice but this avoid having actual_qty = 0 & actual_quantity_2 = -100 or +100
+            if self.actual_qty + bin.actual_qty == 0.0 :
+                qty_2_after_transaction = 0
+            else :
+                qty_2_after_transaction = bin.actual_quantity_2 + self.qty_2_change
+            self.qty_2_after_transaction = qty_2_after_transaction
             bin.actual_quantity_2 = self.qty_2_after_transaction
             bin.save(ignore_permissions=True)
